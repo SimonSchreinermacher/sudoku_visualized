@@ -44,22 +44,22 @@ class SudokuField:
 
 
 def handle_all_fields(grid, event):
-    for i in range(0, 10):
-        for j in range(0, 10):
+    for i in range(0, 9):
+        for j in range(0, 9):
             grid[i][j].handle_input(event)
 
 def draw_all_field(grid):
-    for i in range(0, 10):
-        for j in range(0, 10):
+    for i in range(0, 9):
+        for j in range(0, 9):
             grid[i][j].draw(screen)
 
 def main():
     done = False
     screen.fill((255,255,255))
     grid = []
-    for i in range(0, 10):
+    for i in range(0, 9):
         grid.append([])
-        for j in range(0, 10):
+        for j in range(0, 9):
             field = SudokuField(100+ i*60, 100 + j*60, 50, 50, "", False)
             grid[i].append(field)
             field.draw(screen)
