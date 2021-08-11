@@ -61,6 +61,19 @@ def search_for_empty_spot(sudoku):
 				return i, j	
 	return None
 
+def is_allowed(sudoku,i,j,number):
+	for x in range(0, 9):
+		if(sudoku[x][j] == number or sudoku[i][x] == number):
+			return False
+
+	for x in range(0, 3):
+		for y in range(0,3):
+			upper_left_corner_x = i-i%3
+			upper_left_corner_y = j-j%3
+			if(sudoku[upper_left_corner_x + x][upper_left_corner_y + y] == number):
+				return False
+	return True
+
 def main():
     done = False
     screen.fill((255,255,255))
