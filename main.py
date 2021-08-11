@@ -52,11 +52,20 @@ def draw_all_field(grid):
     for i in range(0, 9):
         for j in range(0, 9):
             grid[i][j].draw(screen)
+    pygame.display.flip()
+
+def search_for_empty_spot(sudoku):
+	for i in range(0, 9):
+		for j in range(0, 9):
+			if(sudoku[i][j] == 0):
+				return i, j	
+	return None
 
 def main():
     done = False
     screen.fill((255,255,255))
     grid = []
+    sudoku = np.zeros((9,9))
     for i in range(0, 9):
         grid.append([])
         for j in range(0, 9):
