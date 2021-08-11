@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 screen = pygame.display.set_mode((1080,720))
+font = pygame.font.Font(None, 70)
 DEFAULT_COLOR = (0,0,0)
 SELECTED_COLOR = (255,0,0)
 FONT_COLOR = (0,0,0)
@@ -12,7 +13,7 @@ class SudokuField:
         self.rect = pygame.Rect(x, y, width, height)
         self.color = DEFAULT_COLOR
         self.text = text
-        self.txt_surface = pygame.font.Font(None, 70).render(text, True, FONT_COLOR)
+        self.txt_surface = font.render(text, True, FONT_COLOR)
         self.active = False
         self.number_locked = False
 
@@ -28,20 +29,32 @@ class SudokuField:
             else:
                 self.active = False
                 self.color = DEFAULT_COLOR
+        elif event.type == pygame.KEYDOWN:
+            if self.active:
+                if self.number_locked == False:
+                    if event.unicode in ["1","2","3","4","5","6","7","8","9"]:
+                        screen.fill((255,255,255))
+                        self.text = event.unicode
+                        self.txt_surface = font.render(self.text,True,FONT_COLOR)
+                        screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
+
 
 
 def main():
     done = False
     screen.fill((255,255,255))
-    test = SudokuField(100,100,50,50, "9")
+    test = SudokuField(100,100,50,50, "9", False)
+    test2 = SudokuField(160,100,50,50, "", False)
     while done is not True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
             else:
                 test.handle_input(event)
+                test2.handle_input(event)
         pygame.display.flip()
         test.draw(screen)
+        test2.draw(screen)
 
 if __name__ == '__main__':
     main()
