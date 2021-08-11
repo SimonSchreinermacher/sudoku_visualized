@@ -1,4 +1,7 @@
 import pygame
+import random
+import numpy as np
+from time import sleep
 
 pygame.init()
 screen = pygame.display.set_mode((1080,720))
@@ -74,6 +77,27 @@ def is_allowed(sudoku,i,j,number):
 				return False
 	return True
 
+def create(sudoku, grid):
+    sleep(0.1)      #For visualizing purposes (creating would be too quickly otherwise)
+    if(search_for_empty_spot(sudoku) != None):
+        (i,j) = search_for_empty_spot(sudoku)
+    else:
+        return sudoku
+    remaining_numbers = [1,2,3,4,5,6,7,8,9]
+    while len(remaining_numbers) != 0:
+        index = random.randint(0, len(remaining_numbers)-1)
+        number = remaining_numbers[index]
+        del remaining_numbers[index]
+        if(is_allowed(sudoku, i, j, number)):
+            sudoku[i][j] = number
+            grid[i][j].set_number(str(number))
+            draw_all_field(grid)
+            if(create(sudoku, grid) is not None):
+                return sudoku
+            sudoku[i][j] = 0
+            grid[i][j].set_number(str(""))
+    return None
+
 def main():
     done = False
     screen.fill((255,255,255))
@@ -85,6 +109,8 @@ def main():
             field = SudokuField(100+ i*60, 100 + j*60, 50, 50, "", False)
             grid[i].append(field)
             field.draw(screen)
+
+    sudoku = create(sudoku, grid)
 
     while done is not True:
         for event in pygame.event.get():
