@@ -91,11 +91,13 @@ def create(sudoku, grid):
         if(is_allowed(sudoku, i, j, number)):
             sudoku[i][j] = number
             grid[i][j].set_number(str(number))
+            grid[i][j].number_locked = True
             draw_all_field(grid)
             if(create(sudoku, grid) is not None):
                 return sudoku
             sudoku[i][j] = 0
             grid[i][j].set_number(str(""))
+            grid[i][j].number_locked = False
     return None
 
 def remove_some_numbers(grid, probability_to_remove):
@@ -104,6 +106,7 @@ def remove_some_numbers(grid, probability_to_remove):
             x = random.random()
             if x <= probability_to_remove:
                 grid[i][j].set_number(str(""))
+                grid[i][j].number_locked = False
 
 def main():
     done = False
