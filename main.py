@@ -44,6 +44,8 @@ class SudokuField:
                 if self.number_locked == False:
                     if event.unicode in ["1","2","3","4","5","6","7","8","9"]:
                         self.set_number(event.unicode)
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.set_number(str(""))
 
 
 def handle_all_fields(grid, event):
