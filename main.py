@@ -98,6 +98,13 @@ def create(sudoku, grid):
             grid[i][j].set_number(str(""))
     return None
 
+def remove_some_numbers(grid, probability_to_remove):
+    for i in range(0, 9):
+        for j in range(0, 9):
+            x = random.random()
+            if x <= probability_to_remove:
+                grid[i][j].set_number(str(""))
+
 def main():
     done = False
     screen.fill((255,255,255))
@@ -111,6 +118,7 @@ def main():
             field.draw(screen)
 
     sudoku = create(sudoku, grid)
+    remove_some_numbers(grid, 0.5)
 
     while done is not True:
         for event in pygame.event.get():
