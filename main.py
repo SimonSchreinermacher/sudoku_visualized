@@ -128,8 +128,8 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
-def main():
-    done = False
+def game():
+    game_active = True
     screen.fill((255,255,255))
     grid = []
     sudoku = np.zeros((9,9))
@@ -143,15 +143,33 @@ def main():
     sudoku = create(sudoku, grid)
     remove_some_numbers(grid, 0.5)
 
-    while done is not True:
+    while game_active:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
+                game_active = False
             else:
                 handle_all_fields(grid, event)
         pygame.display.flip()
         draw_all_field(grid)
 
+def main_menu():
+    screen.fill((255,255,255))
+    main_menu_active = True
+    start_game = Button(300,100, 400,50, "Start Sudoku")
+    start_game.draw(screen)
+    pygame.display.flip()
+    while main_menu_active:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                main_menu_active = False
+            else:
+                if start_game.handle_input(event) == 1:
+                    game()
+        screen.fill((255,255,255))
+        start_game.draw(screen)
+        pygame.display.flip()
+
+
 if __name__ == '__main__':
-    main()
+    main_menu()
     pygame.quit()
