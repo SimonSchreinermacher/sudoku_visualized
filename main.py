@@ -136,9 +136,10 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
-def game(rerun = False, do_visualize = True):
+def initialization():
     start_game = Button(800,100, 200,50, "Start Sudoku")
     start_game.draw(screen)
+    do_visualize = True
 
     if(do_visualize):
         visualize_button_text = "enabled"
@@ -158,32 +159,49 @@ def game(rerun = False, do_visualize = True):
             grid[i].append(field)
             field.draw(screen)
 
-    if(not rerun):
-        game_started = False
-        do_visualize = True
-    
-        while not game_started:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    main_menu_active = False
-                    pygame.quit()
-                    return
-                else:
-                    if visualize_button.is_pressed(event) == 1:
-                        do_visualize = not do_visualize
-                        if do_visualize:
-                            visualize_button.change_text("enabled")
-                        else:
-                            visualize_button.change_text(" disabled")
-                    if start_game.is_pressed(event) == 1:
-                        game_started = True
-                        start_game.change_text("Another round!")
-            
-            start_game.draw(screen)
-            visualize_button.draw(screen)
-            draw_all_field(grid)
-            pygame.display.flip()
+    game_started = False
+    do_visualize = True
 
+    while not game_started:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                main_menu_active = False
+                pygame.quit()
+                return
+            else:
+                if visualize_button.is_pressed(event) == 1:
+                    do_visualize = not do_visualize
+                    if do_visualize:
+                        visualize_button.change_text("enabled")
+                    else:
+                        visualize_button.change_text(" disabled")
+                if start_game.is_pressed(event) == 1:
+                    game_started = True
+                    start_game.change_text("Another round!")
+        
+        start_game.draw(screen)
+        visualize_button.draw(screen)
+        draw_all_field(grid)
+        pygame.display.flip()
+    
+    game(start_game, visualize_button, do_visualize, grid, sudoku)
+
+def game(start_game, visualize_button, do_visualize, grid = [], sudoku = []):
+    if(len(grid) == 0):             #In first game round, grid is passed from the initialization, in all subsequent rounds, grid is created here, because it needs to be cleared before each round
+        screen.fill((255,255,255))
+        grid = []
+        sudoku = np.zeros((9,9))
+        for i in range(0, 9):
+            grid.append([])
+            for j in range(0, 9):
+                field = SudokuField(100+ i*60, 100 + j*60, 50, 50, "", False)
+                grid[i].append(field)
+                field.draw(screen)
+
+    start_game.draw(screen)
+    visualize_button.draw(screen)
+    draw_all_field(grid)
+    pygame.display.flip()
 
     sudoku = create(sudoku, grid, do_visualize)
     remove_some_numbers(grid, 0.5)
@@ -207,11 +225,11 @@ def game(rerun = False, do_visualize = True):
                     else:
                         visualize_button.change_text(" disabled")
                 elif start_game.is_pressed(event) == 1:
-                    game(True, do_visualize)
+                    game(start_game, visualize_button, do_visualize)
                     return
                 else:
-                    handle_all_fields(grid, event)
-        
+                    handle_all_fields(grid, event)    
+
 
 if __name__ == '__main__':
-    game()
+    initialization()
