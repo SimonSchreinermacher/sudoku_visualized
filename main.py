@@ -49,13 +49,13 @@ class SudokuField:
 
 
 class Button:
-    def __init__(self,x,y,width,height,text):
+    def __init__(self,x,y,width,height,text, function_called_on_click = None):
         self.rect = pygame.Rect(x,y,width,height)
         self.text = text
         self.color = DEFAULT_COLOR
         self.txt_surface = font.render(self.text, True, FONT_COLOR)
 
-    def handle_input(self,event):
+    def is_pressed(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 return 1
@@ -65,19 +65,9 @@ class Button:
         screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
-
-class VisualizeButton(Button):
-    def __init__(self,x,y,width,height,text,visualize_active):
-        super().__init__(x,y,width,height,text)
-        self.visualize_active = visualize_active
-
-    def change_mode(self):
+    def change_text(self, text):
         screen.fill((255,255,255))
-        self.visualize_active = not self.visualize_active
-        if self.visualize_active:
-            self.text = "Visualization enabled"
-        else:
-            self.text = "Visualization disabled"    
+        self.text = text
         self.txt_surface = font.render(self.text, True, FONT_COLOR)
         self.draw(screen)
 
@@ -173,10 +163,11 @@ def game(do_visualize = False):
 def main_menu():
     screen.fill((255,255,255))
     main_menu_active = True
+    do_visualize = True
     start_game = Button(300,100, 400,50, "Start Sudoku")
     start_game.draw(screen)
 
-    visualize_button = VisualizeButton(300,400, 400, 50, "Visualization enabled", True)
+    visualize_button = Button(300,400, 400, 50, "Visualization enabled")
     visualize_button.draw(screen)
     pygame.display.flip()
     while main_menu_active:
@@ -184,10 +175,13 @@ def main_menu():
             if event.type == pygame.QUIT:
                 main_menu_active = False
             else:
-                if visualize_button.handle_input(event) == 1:
-                    visualize_button.change_mode()
-                if start_game.handle_input(event) == 1:
-                    do_visualize = visualize_button.visualize_active
+                if visualize_button.is_pressed(event) == 1:
+                    do_visualize = not do_visualize
+                    if do_visualize:
+                        visualize_button.change_text("Visualization enabled")
+                    else:
+                        visualize_button.change_text("Visualization disabled")
+                if start_game.is_pressed(event) == 1:
                     game(do_visualize)
         screen.fill((255,255,255))
         start_game.draw(screen)
