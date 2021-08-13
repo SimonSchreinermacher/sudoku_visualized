@@ -28,7 +28,7 @@ class SudokuField:
         screen.fill((255,255,255))
         self.text = number
         self.txt_surface = font.render(self.text,True,FONT_COLOR)
-        screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
+        #screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
         self.draw(screen)
 
     def handle_input(self, event):
@@ -46,6 +46,24 @@ class SudokuField:
                         self.set_number(event.unicode)
                     elif event.key == pygame.K_BACKSPACE:
                         self.set_number(str(""))
+
+
+class Button:
+    def __init__(self,x,y,width,height,text):
+        self.rect = pygame.Rect(x,y,width,height)
+        self.text = text
+        self.color = DEFAULT_COLOR
+        self.txt_surface = font.render(self.text, True, FONT_COLOR)
+
+    def handle_input(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                return 1
+        return 0
+
+    def draw(self, screen):
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        pygame.draw.rect(screen, self.color, self.rect, 2)
 
 
 def handle_all_fields(grid, event):
