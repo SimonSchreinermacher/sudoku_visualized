@@ -113,8 +113,9 @@ def is_allowed(sudoku,i,j,number):
 				return False
 	return True
 
-def create(sudoku, grid):
-    sleep(0.1)      #For visualizing purposes (creating would be too quickly otherwise)
+def create(sudoku, grid, do_visualize):
+    if(do_visualize):
+        sleep(0.1)      #For visualizing purposes (creating would be too quickly otherwise)
     if(search_for_empty_spot(sudoku) != None):
         (i,j) = search_for_empty_spot(sudoku)
     else:
@@ -128,8 +129,9 @@ def create(sudoku, grid):
             sudoku[i][j] = number
             grid[i][j].set_number(str(number))
             grid[i][j].number_locked = True
-            draw_all_field(grid)
-            if(create(sudoku, grid) is not None):
+            if do_visualize:
+                draw_all_field(grid)
+            if(create(sudoku, grid, do_visualize) is not None):
                 return sudoku
             sudoku[i][j] = 0
             grid[i][j].set_number(str(""))
@@ -144,7 +146,7 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
-def game():
+def game(do_visualize = False):
     game_active = True
     screen.fill((255,255,255))
     grid = []
@@ -156,7 +158,7 @@ def game():
             grid[i].append(field)
             field.draw(screen)
 
-    sudoku = create(sudoku, grid)
+    sudoku = create(sudoku, grid, do_visualize)
     remove_some_numbers(grid, 0.5)
 
     while game_active:
@@ -185,7 +187,8 @@ def main_menu():
                 if visualize_button.handle_input(event) == 1:
                     visualize_button.change_mode()
                 if start_game.handle_input(event) == 1:
-                    game()
+                    do_visualize = visualize_button.visualize_active
+                    game(do_visualize)
         screen.fill((255,255,255))
         start_game.draw(screen)
         visualize_button.draw(screen)
