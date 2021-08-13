@@ -49,7 +49,7 @@ class SudokuField:
 
 
 class Button:
-    def __init__(self,x,y,width,height,text, function_called_on_click = None):
+    def __init__(self,x,y,width,height,text):
         self.rect = pygame.Rect(x,y,width,height)
         self.text = text
         self.color = DEFAULT_COLOR
@@ -136,8 +136,18 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
-def game(do_visualize = False):
-    game_active = True
+def game(rerun = False, do_visualize = True):
+    start_game = Button(800,100, 200,50, "Start Sudoku")
+    start_game.draw(screen)
+
+    if(do_visualize):
+        visualize_button_text = "enabled"
+    else:
+        visualize_button_text = "disabled"
+
+    visualize_button = Button(800,400, 200, 50, visualize_button_text)
+    visualize_button.draw(screen)
+
     screen.fill((255,255,255))
     grid = []
     sudoku = np.zeros((9,9))
@@ -148,47 +158,60 @@ def game(do_visualize = False):
             grid[i].append(field)
             field.draw(screen)
 
+    if(not rerun):
+        game_started = False
+        do_visualize = True
+    
+        while not game_started:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    main_menu_active = False
+                    pygame.quit()
+                    return
+                else:
+                    if visualize_button.is_pressed(event) == 1:
+                        do_visualize = not do_visualize
+                        if do_visualize:
+                            visualize_button.change_text("enabled")
+                        else:
+                            visualize_button.change_text(" disabled")
+                    if start_game.is_pressed(event) == 1:
+                        game_started = True
+                        start_game.change_text("Another round!")
+            
+            start_game.draw(screen)
+            visualize_button.draw(screen)
+            draw_all_field(grid)
+            pygame.display.flip()
+
+
     sudoku = create(sudoku, grid, do_visualize)
     remove_some_numbers(grid, 0.5)
+    game_active = True
 
     while game_active:
+        start_game.draw(screen)
+        visualize_button.draw(screen)
+        draw_all_field(grid)
+        pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_active = False
-            else:
-                handle_all_fields(grid, event)
-        pygame.display.flip()
-        draw_all_field(grid)
-
-def main_menu():
-    screen.fill((255,255,255))
-    main_menu_active = True
-    do_visualize = True
-    start_game = Button(300,100, 400,50, "Start Sudoku")
-    start_game.draw(screen)
-
-    visualize_button = Button(300,400, 400, 50, "Visualization enabled")
-    visualize_button.draw(screen)
-    pygame.display.flip()
-    while main_menu_active:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                main_menu_active = False
+                pygame.quit()
+                return
             else:
                 if visualize_button.is_pressed(event) == 1:
                     do_visualize = not do_visualize
                     if do_visualize:
-                        visualize_button.change_text("Visualization enabled")
+                        visualize_button.change_text("enabled")
                     else:
-                        visualize_button.change_text("Visualization disabled")
-                if start_game.is_pressed(event) == 1:
-                    game(do_visualize)
-        screen.fill((255,255,255))
-        start_game.draw(screen)
-        visualize_button.draw(screen)
-        pygame.display.flip()
-
+                        visualize_button.change_text(" disabled")
+                elif start_game.is_pressed(event) == 1:
+                    game(True, do_visualize)
+                    return
+                else:
+                    handle_all_fields(grid, event)
+        
 
 if __name__ == '__main__':
-    main_menu()
-    pygame.quit()
+    game()
