@@ -66,6 +66,22 @@ class Button:
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
 
+class VisualizeButton(Button):
+    def __init__(self,x,y,width,height,text,visualize_active):
+        super().__init__(x,y,width,height,text)
+        self.visualize_active = visualize_active
+
+    def change_mode(self):
+        screen.fill((255,255,255))
+        self.visualize_active = not self.visualize_active
+        if self.visualize_active:
+            self.text = "Visualization enabled"
+        else:
+            self.text = "Visualization disabled"    
+        self.txt_surface = font.render(self.text, True, FONT_COLOR)
+        self.draw(screen)
+
+
 def handle_all_fields(grid, event):
     for i in range(0, 9):
         for j in range(0, 9):
@@ -157,16 +173,22 @@ def main_menu():
     main_menu_active = True
     start_game = Button(300,100, 400,50, "Start Sudoku")
     start_game.draw(screen)
+
+    visualize_button = VisualizeButton(300,400, 400, 50, "Visualization enabled", True)
+    visualize_button.draw(screen)
     pygame.display.flip()
     while main_menu_active:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 main_menu_active = False
             else:
+                if visualize_button.handle_input(event) == 1:
+                    visualize_button.change_mode()
                 if start_game.handle_input(event) == 1:
                     game()
         screen.fill((255,255,255))
         start_game.draw(screen)
+        visualize_button.draw(screen)
         pygame.display.flip()
 
 
