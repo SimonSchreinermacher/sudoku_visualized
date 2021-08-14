@@ -83,47 +83,45 @@ def draw_all_field(grid):
             grid[i][j].draw(screen)
     pygame.display.flip()
 
-def search_for_empty_spot(sudoku):
+def search_for_empty_spot(grid):
 	for i in range(0, 9):
 		for j in range(0, 9):
-			if(sudoku[i][j] == 0):
+			if(grid[i][j].text == ""):
 				return i, j	
 	return None
 
-def is_allowed(sudoku,i,j,number):
+def is_allowed(grid,i,j,number):
 	for x in range(0, 9):
-		if(sudoku[x][j] == number or sudoku[i][x] == number):
+		if(grid[x][j].text == str(number) or grid[i][x].text == str(number)):
 			return False
 
 	for x in range(0, 3):
 		for y in range(0,3):
 			upper_left_corner_x = i-i%3
 			upper_left_corner_y = j-j%3
-			if(sudoku[upper_left_corner_x + x][upper_left_corner_y + y] == number):
+			if(grid[upper_left_corner_x + x][upper_left_corner_y + y].text == str(number)):
 				return False
 	return True
 
-def create(sudoku, grid, do_visualize):
+def create(grid, do_visualize):
     if(do_visualize):
         sleep(0.1)      #For visualizing purposes (creating would be too quickly otherwise)
-    if(search_for_empty_spot(sudoku) != None):
-        (i,j) = search_for_empty_spot(sudoku)
+    if(search_for_empty_spot(grid) != None):
+        (i,j) = search_for_empty_spot(grid)
     else:
-        return sudoku
+        return grid
     remaining_numbers = [1,2,3,4,5,6,7,8,9]
     while len(remaining_numbers) != 0:
         index = random.randint(0, len(remaining_numbers)-1)
         number = remaining_numbers[index]
         del remaining_numbers[index]
-        if(is_allowed(sudoku, i, j, number)):
-            sudoku[i][j] = number
+        if(is_allowed(grid, i, j, number)):
             grid[i][j].set_number(str(number))
             grid[i][j].number_locked = True
             if do_visualize:
                 draw_all_field(grid)
-            if(create(sudoku, grid, do_visualize) is not None):
-                return sudoku
-            sudoku[i][j] = 0
+            if(create(grid, do_visualize) is not None):
+                return grid
             grid[i][j].set_number(str(""))
             grid[i][j].number_locked = False
     return None
@@ -151,7 +149,6 @@ def initialization():
 
     screen.fill((255,255,255))
     grid = []
-    sudoku = np.zeros((9,9))
     for i in range(0, 9):
         grid.append([])
         for j in range(0, 9):
@@ -184,13 +181,12 @@ def initialization():
         draw_all_field(grid)
         pygame.display.flip()
     
-    game(start_game, visualize_button, do_visualize, grid, sudoku)
+    game(start_game, visualize_button, do_visualize, grid)
 
-def game(start_game, visualize_button, do_visualize, grid = [], sudoku = []):
+def game(start_game, visualize_button, do_visualize, grid = []):
     if(len(grid) == 0):             #In first game round, grid is passed from the initialization, in all subsequent rounds, grid is created here, because it needs to be cleared before each round
         screen.fill((255,255,255))
         grid = []
-        sudoku = np.zeros((9,9))
         for i in range(0, 9):
             grid.append([])
             for j in range(0, 9):
@@ -203,7 +199,7 @@ def game(start_game, visualize_button, do_visualize, grid = [], sudoku = []):
     draw_all_field(grid)
     pygame.display.flip()
 
-    sudoku = create(sudoku, grid, do_visualize)
+    grid = create(grid, do_visualize)
     remove_some_numbers(grid, 0.5)
     game_active = True
 
