@@ -75,6 +75,37 @@ class Button:
         self.draw(screen)
 
 
+def all_fields_filled(grid):
+    for i in range(0, 9):
+        for j in range(0,9):
+            if grid[i][j].text == str(""):
+                return False
+    return True
+
+def solved_correctly(grid):
+    #Do all rows/columns contain every digit exactly once
+    for i in range(0,9):
+        column_content = []
+        row_content = []
+        for j in range(0, 9):
+            column_content.append(grid[i][j].text)
+            row_content.append(grid[j][i].text)
+        if not(set(column_content) == set(["1", "2", "3", "4", "5", "6", "7", "8", "9"])):
+            return False
+        if not(set(row_content) == set(["1", "2", "3", "4", "5", "6", "7", "8", "9"])):
+            return False
+
+    #Do all 3x3-Grids contain every digit exactly once
+    for i in range(0,3):
+        for j in range(0,3):
+            grid_content = []
+            for a in range(0,3):
+                for b in range(0,3):
+                    grid_content.append(grid[3*i + a][3*j + b].text) #TODO: NOT WORKING
+            if not(set(grid_content) == set(["1", "2", "3", "4", "5", "6", "7", "8", "9"])):
+                return False
+    return True
+
 def handle_all_fields(grid, event):
     for i in range(0, 9):
         for j in range(0, 9):
@@ -234,7 +265,9 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                 elif solve_button.is_pressed(event) == 1:
                     fill_sudoku(grid,do_visualize)
                 else:
-                    handle_all_fields(grid, event)    
+                    if(handle_all_fields(grid, event) == 1):
+                        if all_fields_filled(grid) == 1:
+                            print(solved_correctly(grid))
 
 
 if __name__ == '__main__':
