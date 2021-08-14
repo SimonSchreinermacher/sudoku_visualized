@@ -5,7 +5,6 @@ from time import sleep
 
 pygame.init()
 screen = pygame.display.set_mode((1080,720))
-font = pygame.font.Font(None, 70)
 DEFAULT_COLOR = (0,0,0)
 SELECTED_COLOR = (255,0,0)
 FONT_COLOR = (0,0,0)
@@ -16,7 +15,8 @@ class SudokuField:
         self.rect = pygame.Rect(x, y, width, height)
         self.color = DEFAULT_COLOR
         self.text = text
-        self.txt_surface = font.render(text, True, FONT_COLOR)
+        self.font = pygame.font.Font(None, 70)
+        self.txt_surface = self.font.render(text, True, FONT_COLOR)
         self.active = False
         self.number_locked = False
 
@@ -27,7 +27,7 @@ class SudokuField:
     def set_number(self,number):
         screen.fill((255,255,255))
         self.text = number
-        self.txt_surface = font.render(self.text,True,FONT_COLOR)
+        self.txt_surface = self.font.render(self.text,True,FONT_COLOR)
         #screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
         self.draw(screen)
 
@@ -52,8 +52,9 @@ class Button:
     def __init__(self,x,y,width,height,text):
         self.rect = pygame.Rect(x,y,width,height)
         self.text = text
+        self.font = pygame.font.Font(None, 30)
         self.color = DEFAULT_COLOR
-        self.txt_surface = font.render(self.text, True, FONT_COLOR)
+        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
 
     def is_pressed(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -68,7 +69,7 @@ class Button:
     def change_text(self, text):
         screen.fill((255,255,255))
         self.text = text
-        self.txt_surface = font.render(self.text, True, FONT_COLOR)
+        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
         self.draw(screen)
 
 
@@ -135,16 +136,16 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].number_locked = False
 
 def initialization():
-    start_game = Button(800,100, 200,50, "Start Sudoku")
+    start_game = Button(700,100, 300,30, "Start Sudoku")
     start_game.draw(screen)
     do_visualize = True
 
     if(do_visualize):
-        visualize_button_text = "enabled"
+        visualize_button_text = "Visualization enabled"
     else:
-        visualize_button_text = "disabled"
+        visualize_button_text = "Visualization disabled"
 
-    visualize_button = Button(800,400, 200, 50, visualize_button_text)
+    visualize_button = Button(700,400, 300, 30, visualize_button_text)
     visualize_button.draw(screen)
 
     screen.fill((255,255,255))
@@ -169,9 +170,9 @@ def initialization():
                 if visualize_button.is_pressed(event) == 1:
                     do_visualize = not do_visualize
                     if do_visualize:
-                        visualize_button.change_text("enabled")
+                        visualize_button.change_text("Visualization enabled")
                     else:
-                        visualize_button.change_text(" disabled")
+                        visualize_button.change_text("Visualization disabled")
                 if start_game.is_pressed(event) == 1:
                     game_started = True
                     start_game.change_text("Another round!")
@@ -203,7 +204,7 @@ def game(start_game, visualize_button, do_visualize, grid = []):
     remove_some_numbers(grid, 0.5)
     game_active = True
 
-    solve_button = Button(800,200, 200, 50, "Solve")
+    solve_button = Button(700,200, 300, 30, "Solve")
 
     while game_active:
         start_game.draw(screen)
@@ -220,9 +221,9 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                 if visualize_button.is_pressed(event) == 1:
                     do_visualize = not do_visualize
                     if do_visualize:
-                        visualize_button.change_text("enabled")
+                        visualize_button.change_text("Visualization enabled")
                     else:
-                        visualize_button.change_text(" disabled")
+                        visualize_button.change_text("Visualization disabled")
                 elif start_game.is_pressed(event) == 1:
                     game(start_game, visualize_button, do_visualize)
                     return
