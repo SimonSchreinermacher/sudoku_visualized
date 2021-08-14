@@ -103,7 +103,7 @@ def is_allowed(grid,i,j,number):
 				return False
 	return True
 
-def create(grid, do_visualize):
+def fill_sudoku(grid, do_visualize):    #This can be used for either solving or creating (= solving a completely empty sudoku)
     if(do_visualize):
         sleep(0.1)      #For visualizing purposes (creating would be too quickly otherwise)
     if(search_for_empty_spot(grid) != None):
@@ -120,7 +120,7 @@ def create(grid, do_visualize):
             grid[i][j].number_locked = True
             if do_visualize:
                 draw_all_field(grid)
-            if(create(grid, do_visualize) is not None):
+            if(fill_sudoku(grid, do_visualize) is not None):
                 return grid
             grid[i][j].set_number(str(""))
             grid[i][j].number_locked = False
@@ -199,13 +199,16 @@ def game(start_game, visualize_button, do_visualize, grid = []):
     draw_all_field(grid)
     pygame.display.flip()
 
-    grid = create(grid, do_visualize)
+    grid = fill_sudoku(grid, do_visualize)
     remove_some_numbers(grid, 0.5)
     game_active = True
+
+    solve_button = Button(800,200, 200, 50, "Solve")
 
     while game_active:
         start_game.draw(screen)
         visualize_button.draw(screen)
+        solve_button.draw(screen)
         draw_all_field(grid)
         pygame.display.flip()
         for event in pygame.event.get():
@@ -223,6 +226,8 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                 elif start_game.is_pressed(event) == 1:
                     game(start_game, visualize_button, do_visualize)
                     return
+                elif solve_button.is_pressed(event) == 1:
+                    fill_sudoku(grid,do_visualize)
                 else:
                     handle_all_fields(grid, event)    
 
