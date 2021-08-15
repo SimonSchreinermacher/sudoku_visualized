@@ -171,6 +171,12 @@ def remove_some_numbers(grid, probability_to_remove):
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
+def on_solve(grid):
+    for i in range(0,9):
+        for j in range(0,9):
+            grid[i][j].color = SOLVED_COLOR
+    draw_all_field(grid)
+
 def initialization():
     start_game = Button(700,100, 300,30, "Start Sudoku")
     start_game.draw(screen)
@@ -267,15 +273,14 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                     return
                 elif solve_button.is_pressed(event) == 1:
                     fill_sudoku(grid,do_visualize)
+                    is_solved = True
+                    on_solve(grid)
                 else:
                     if(not is_solved):
                         if(handle_all_fields(grid, event) == 1):
                             if all_fields_filled(grid) == 1:
                                 if(solved_correctly(grid)):
-                                    for i in range(0,9):
-                                        for j in range(0,9):
-                                            grid[i][j].color = SOLVED_COLOR
-                                    draw_all_field(grid)
+                                    on_solve(grid)
                                     is_solved = True
 
 
