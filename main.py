@@ -8,6 +8,7 @@ screen = pygame.display.set_mode((1080,720))
 DEFAULT_COLOR = (0,0,0)
 SELECTED_COLOR = (255,0,0)
 FONT_COLOR = (0,0,0)
+SOLVED_COLOR = (20,200,20)
 
 class SudokuField:
 
@@ -101,7 +102,7 @@ def solved_correctly(grid):
             grid_content = []
             for a in range(0,3):
                 for b in range(0,3):
-                    grid_content.append(grid[3*i + a][3*j + b].text) #TODO: NOT WORKING
+                    grid_content.append(grid[3*i + a][3*j + b].text)
             if not(set(grid_content) == set(["1", "2", "3", "4", "5", "6", "7", "8", "9"])):
                 return False
     return True
@@ -220,6 +221,8 @@ def initialization():
     game(start_game, visualize_button, do_visualize, grid)
 
 def game(start_game, visualize_button, do_visualize, grid = []):
+    is_solved = False
+
     if(len(grid) == 0):             #In first game round, grid is passed from the initialization, in all subsequent rounds, grid is created here, because it needs to be cleared before each round
         screen.fill((255,255,255))
         grid = []
@@ -236,7 +239,7 @@ def game(start_game, visualize_button, do_visualize, grid = []):
     pygame.display.flip()
 
     grid = fill_sudoku(grid, do_visualize)
-    remove_some_numbers(grid, 0.5)
+    remove_some_numbers(grid, 0.1)
     game_active = True
 
     solve_button = Button(700,200, 300, 30, "Solve")
@@ -265,9 +268,15 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                 elif solve_button.is_pressed(event) == 1:
                     fill_sudoku(grid,do_visualize)
                 else:
-                    if(handle_all_fields(grid, event) == 1):
-                        if all_fields_filled(grid) == 1:
-                            print(solved_correctly(grid))
+                    if(not is_solved):
+                        if(handle_all_fields(grid, event) == 1):
+                            if all_fields_filled(grid) == 1:
+                                if(solved_correctly(grid)):
+                                    for i in range(0,9):
+                                        for j in range(0,9):
+                                            grid[i][j].color = SOLVED_COLOR
+                                    draw_all_field(grid)
+                                    is_solved = True
 
 
 if __name__ == '__main__':
