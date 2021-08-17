@@ -183,11 +183,11 @@ def fill_sudoku(grid, do_visualize):    #This can be used for either solving or 
             grid[i][j].number_locked = False
     return None
 
-def remove_some_numbers(grid, probability_to_remove):
+def remove_some_numbers(grid, probability_to_remain):
     for i in range(0, 9):
         for j in range(0, 9):
             x = random.random()
-            if x <= probability_to_remove:
+            if x > probability_to_remain:
                 grid[i][j].set_number(str(""))
                 grid[i][j].number_locked = False
 
@@ -212,7 +212,7 @@ def initialization():
     visualize_button.draw(screen)
 
     percentage_increase_button = Button(700,280, 100,30, "+")
-    percentage_decrease_button = Button(800,280, 100, 30, "-")
+    percentage_decrease_button = Button(820,280, 100, 30, "-")
 
     percentage_increase_button.draw(screen)
     percentage_decrease_button.draw(screen)
@@ -245,7 +245,15 @@ def initialization():
                         visualize_button.change_text("Visualization enabled")
                     else:
                         visualize_button.change_text("Visualization disabled")
-                if start_game.is_pressed(event) == 1:
+                elif percentage_increase_button.is_pressed(event) == 1:
+                    if percentage_filled < 0.99:
+                        percentage_filled += 0.01
+                        percentage_textbox.change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
+                elif percentage_decrease_button.is_pressed(event) == 1:
+                    if percentage_filled > 0.01:
+                        percentage_filled -= 0.01
+                        percentage_textbox.change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
+                elif start_game.is_pressed(event) == 1:
                     game_started = True
                     start_game.change_text("Another round!")
         
@@ -310,6 +318,14 @@ def game(start_game, visualize_button, percentage_increase_button, percentage_de
                 elif start_game.is_pressed(event) == 1:
                     game(start_game, visualize_button, percentage_increase_button, percentage_decrease_button, percentage_textbox, do_visualize, percentage_filled)
                     return
+                elif percentage_increase_button.is_pressed(event) == 1:
+                    if percentage_filled < 0.99:
+                        percentage_filled += 0.01
+                        percentage_textbox.change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
+                elif percentage_decrease_button.is_pressed(event) == 1:
+                    if percentage_filled > 0.01:
+                        percentage_filled -= 0.01
+                        percentage_textbox.change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
                 elif solve_button.is_pressed(event) == 1:
                     fill_sudoku(grid,do_visualize)
                     is_solved = True
