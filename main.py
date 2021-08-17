@@ -201,6 +201,7 @@ def initialization():
     start_game = Button(700,100, 300,30, "Start Sudoku")
     start_game.draw(screen)
     do_visualize = True
+    percentage_filled = 0.5
 
     if(do_visualize):
         visualize_button_text = "Visualization enabled"
@@ -209,6 +210,15 @@ def initialization():
 
     visualize_button = Button(700,400, 300, 30, visualize_button_text)
     visualize_button.draw(screen)
+
+    percentage_increase_button = Button(700,280, 100,30, "+")
+    percentage_decrease_button = Button(800,280, 100, 30, "-")
+
+    percentage_increase_button.draw(screen)
+    percentage_decrease_button.draw(screen)
+
+    percentage_textbox = TextField(700,250, 100, 30, str("Initialized filled tiles: " + str(percentage_filled)))
+    percentage_textbox.draw(screen)
 
     screen.fill((255,255,255))
     grid = []
@@ -241,12 +251,15 @@ def initialization():
         
         start_game.draw(screen)
         visualize_button.draw(screen)
+        percentage_increase_button.draw(screen)
+        percentage_decrease_button.draw(screen)
+        percentage_textbox.draw(screen)
         draw_all_field(grid)
         pygame.display.flip()
     
-    game(start_game, visualize_button, do_visualize, grid)
+    game(start_game, visualize_button, percentage_increase_button, percentage_decrease_button, percentage_textbox, do_visualize, percentage_filled, grid)
 
-def game(start_game, visualize_button, do_visualize, grid = []):
+def game(start_game, visualize_button, percentage_increase_button, percentage_decrease_button, percentage_textbox, do_visualize, percentage_filled, grid = []):
     is_solved = False
 
     if(len(grid) == 0):             #In first game round, grid is passed from the initialization, in all subsequent rounds, grid is created here, because it needs to be cleared before each round
@@ -261,11 +274,14 @@ def game(start_game, visualize_button, do_visualize, grid = []):
 
     start_game.draw(screen)
     visualize_button.draw(screen)
+    percentage_increase_button.draw(screen)
+    percentage_decrease_button.draw(screen)
+    percentage_textbox.draw(screen)
     draw_all_field(grid)
     pygame.display.flip()
 
     grid = fill_sudoku(grid, do_visualize)
-    remove_some_numbers(grid, 0.5)
+    remove_some_numbers(grid, percentage_filled)
     game_active = True
 
     solve_button = Button(700,200, 300, 30, "Solve")
@@ -274,6 +290,9 @@ def game(start_game, visualize_button, do_visualize, grid = []):
         start_game.draw(screen)
         visualize_button.draw(screen)
         solve_button.draw(screen)
+        percentage_increase_button.draw(screen)
+        percentage_decrease_button.draw(screen)
+        percentage_textbox.draw(screen)
         draw_all_field(grid)
         pygame.display.flip()
         for event in pygame.event.get():
@@ -289,7 +308,7 @@ def game(start_game, visualize_button, do_visualize, grid = []):
                     else:
                         visualize_button.change_text("Visualization disabled")
                 elif start_game.is_pressed(event) == 1:
-                    game(start_game, visualize_button, do_visualize)
+                    game(start_game, visualize_button, percentage_increase_button, percentage_decrease_button, percentage_textbox, do_visualize, percentage_filled)
                     return
                 elif solve_button.is_pressed(event) == 1:
                     fill_sudoku(grid,do_visualize)
