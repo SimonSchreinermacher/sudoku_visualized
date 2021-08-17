@@ -7,6 +7,7 @@ pygame.init()
 screen = pygame.display.set_mode((1080,720))
 DEFAULT_COLOR = (0,0,0)
 SELECTED_COLOR = (255,0,0)
+TEXTBOX_COLOR = (255,255,255)
 FONT_COLOR = (0,0,0)
 SOLVED_COLOR = (20,200,20)
 
@@ -64,6 +65,25 @@ class Button:
             if self.rect.collidepoint(event.pos):
                 return 1
         return 0
+
+    def draw(self, screen):
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        pygame.draw.rect(screen, self.color, self.rect, 2)
+
+    def change_text(self, text):
+        screen.fill((255,255,255))
+        self.text = text
+        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
+        self.draw(screen)
+
+
+class TextField:
+    def __init__(self,x,y,width, height, text):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.font = pygame.font.Font(None, 30)
+        self.color = TEXTBOX_COLOR
+        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
 
     def draw(self, screen):
         screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
@@ -245,7 +265,7 @@ def game(start_game, visualize_button, do_visualize, grid = []):
     pygame.display.flip()
 
     grid = fill_sudoku(grid, do_visualize)
-    remove_some_numbers(grid, 0.1)
+    remove_some_numbers(grid, 0.5)
     game_active = True
 
     solve_button = Button(700,200, 300, 30, "Solve")
