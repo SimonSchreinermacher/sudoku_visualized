@@ -9,6 +9,7 @@ DEFAULT_COLOR = (0,0,0)
 SELECTED_COLOR = (255,0,0)
 TEXTBOX_COLOR = (255,255,255)
 FONT_COLOR = (0,0,0)
+USER_INPUT_FONT_COLOR = (100,100,100)
 SOLVED_COLOR = (20,200,20)
 
 class SudokuField:
@@ -21,16 +22,21 @@ class SudokuField:
         self.txt_surface = self.font.render(text, True, FONT_COLOR)
         self.active = False
         self.number_locked = False
+        self.number_entered_by_user = False
 
     def draw(self, screen):
         screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
-    def set_number(self,number):
+    def set_number(self,number, is_user_input):
         screen.fill((255,255,255))
         self.text = number
-        self.txt_surface = self.font.render(self.text,True,FONT_COLOR)
-        #screen.blit(self.txt_surface, (self.rect.x + 15, self.rect.y + 5))
+        if is_user_input:
+            self.number_entered_by_user = True
+            self.txt_surface = self.font.render(self.text,True,USER_INPUT_FONT_COLOR)
+        else:
+            self.number_entered_by_user = False
+            self.txt_surface = self.font.render(self.text,True,FONT_COLOR)
         self.draw(screen)
 
     def handle_input(self, event):
@@ -45,10 +51,10 @@ class SudokuField:
             if self.active:
                 if self.number_locked == False:
                     if event.unicode in ["1","2","3","4","5","6","7","8","9"]:
-                        self.set_number(event.unicode)
+                        self.set_number(event.unicode, True)
                         return 1
                     elif event.key == pygame.K_BACKSPACE:
-                        self.set_number(str(""))
+                        self.set_number(str(""), True)
                         return 0
 
 
@@ -173,13 +179,13 @@ def fill_sudoku(grid, do_visualize):    #This can be used for either solving or 
         number = remaining_numbers[index]
         del remaining_numbers[index]
         if(is_allowed(grid, i, j, number)):
-            grid[i][j].set_number(str(number))
+            grid[i][j].set_number(str(number), False)
             grid[i][j].number_locked = True
             if do_visualize:
                 draw_all_field(grid)
             if(fill_sudoku(grid, do_visualize) is not None):
                 return grid
-            grid[i][j].set_number(str(""))
+            grid[i][j].set_number(str(""), False)
             grid[i][j].number_locked = False
     return None
 
@@ -188,7 +194,7 @@ def remove_some_numbers(grid, probability_to_remain):
         for j in range(0, 9):
             x = random.random()
             if x > probability_to_remain:
-                grid[i][j].set_number(str(""))
+                grid[i][j].set_number(str(""), False)
                 grid[i][j].number_locked = False
 
 def on_solve(grid):
