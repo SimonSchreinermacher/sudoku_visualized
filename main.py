@@ -197,6 +197,10 @@ def on_solve(grid):
             grid[i][j].color = SOLVED_COLOR
     draw_all_field(grid)
 
+def draw_all_gui(gui_objects, screen):
+    for object in gui_objects:
+        gui_objects[object].draw(screen)
+
 def initialization():
     do_visualize = True
     percentage_filled = 0.5
@@ -214,11 +218,7 @@ def initialization():
     gui_objects["percentage_decrease_button"] = Button(820,280, 100, 30, "-")
     gui_objects["percentage_textbox"] = TextField(700,250, 100, 30, str("Initialized filled tiles: " + str(percentage_filled)))
 
-    gui_objects["start_game"].draw(screen)
-    gui_objects["visualize_button"].draw(screen)
-    gui_objects["percentage_increase_button"].draw(screen)
-    gui_objects["percentage_decrease_button"].draw(screen)
-    gui_objects["percentage_textbox"].draw(screen)
+    draw_all_gui(gui_objects, screen)
 
     screen.fill((255,255,255))
     grid = []
@@ -257,11 +257,7 @@ def initialization():
                     game_started = True
                     gui_objects["start_game"].change_text("Another round!")
         
-        gui_objects["start_game"].draw(screen)
-        gui_objects["visualize_button"].draw(screen)
-        gui_objects["percentage_increase_button"].draw(screen)
-        gui_objects["percentage_decrease_button"].draw(screen)
-        gui_objects["percentage_textbox"].draw(screen)
+        draw_all_gui(gui_objects, screen)
         draw_all_field(grid)
         pygame.display.flip()
     
@@ -280,11 +276,7 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
                 grid[i].append(field)
                 field.draw(screen)
 
-    gui_objects["start_game"].draw(screen)
-    gui_objects["visualize_button"].draw(screen)
-    gui_objects["percentage_increase_button"].draw(screen)
-    gui_objects["percentage_decrease_button"].draw(screen)
-    gui_objects["percentage_textbox"].draw(screen)
+    draw_all_gui(gui_objects, screen)
     draw_all_field(grid)
     pygame.display.flip()
 
@@ -295,12 +287,7 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
     gui_objects["solve_button"] = Button(700,200, 300, 30, "Solve")
 
     while game_active:
-        gui_objects["start_game"].draw(screen)
-        gui_objects["visualize_button"].draw(screen)
-        gui_objects["percentage_increase_button"].draw(screen)
-        gui_objects["percentage_decrease_button"].draw(screen)
-        gui_objects["percentage_textbox"].draw(screen)
-        gui_objects["solve_button"].draw(screen)
+        draw_all_gui(gui_objects, screen)
         draw_all_field(grid)
         pygame.display.flip()
         for event in pygame.event.get():
