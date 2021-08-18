@@ -149,20 +149,20 @@ def draw_all_field(grid):
 def search_for_empty_spot(grid):
 	for i in range(0, 9):
 		for j in range(0, 9):
-			if(grid[i][j].text == ""):
+			if(grid[i][j].text == "" or grid[i][j].number_entered_by_user == True):
 				return i, j	
 	return None
 
 def is_allowed(grid,i,j,number):
 	for x in range(0, 9):
-		if(grid[x][j].text == str(number) or grid[i][x].text == str(number)):
+		if((grid[x][j].text == str(number) and grid[x][j].number_entered_by_user == False) or (grid[i][x].text == str(number)) and grid[i][x].number_entered_by_user == False):
 			return False
 
 	for x in range(0, 3):
 		for y in range(0,3):
 			upper_left_corner_x = i-i%3
 			upper_left_corner_y = j-j%3
-			if(grid[upper_left_corner_x + x][upper_left_corner_y + y].text == str(number)):
+			if(grid[upper_left_corner_x + x][upper_left_corner_y + y].text == str(number) and grid[upper_left_corner_x + x][upper_left_corner_y + y].number_entered_by_user == False):
 				return False
 	return True
 
@@ -181,12 +181,14 @@ def fill_sudoku(grid, do_visualize):    #This can be used for either solving or 
         if(is_allowed(grid, i, j, number)):
             grid[i][j].set_number(str(number), False)
             grid[i][j].number_locked = True
+            grid[i][j].number_entered_by_user = False
             if do_visualize:
                 draw_all_field(grid)
             if(fill_sudoku(grid, do_visualize) is not None):
                 return grid
             grid[i][j].set_number(str(""), False)
             grid[i][j].number_locked = False
+            grid[i][j].number_entered_by_user = False
     return None
 
 def remove_some_numbers(grid, probability_to_remain):
