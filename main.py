@@ -192,7 +192,12 @@ def fill_sudoku(grid, do_visualize):    #This can be used for either solving or 
     return None
 
 def remove_some_numbers(grid, probability_to_remain):
-    for i in range(0, 9):
+    i = random.randint(0,8)                 #One tile is guaranteed to be removed
+    j = random.randint(0,8)
+    grid[i][j].set_number(str(""), False)
+    grid[i][j].number_locked = False
+
+    for i in range(0, 9):                   #All other tiles have the set probability to be removed
         for j in range(0, 9):
             x = random.random()
             if x > probability_to_remain:
