@@ -58,32 +58,7 @@ class SudokuField:
                         return 0
 
 
-class Button:
-    def __init__(self,x,y,width,height,text):
-        self.rect = pygame.Rect(x,y,width,height)
-        self.text = text
-        self.font = pygame.font.Font(None, 30)
-        self.color = DEFAULT_COLOR
-        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
-
-    def is_pressed(self,event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                return 1
-        return 0
-
-    def draw(self, screen):
-        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
-        pygame.draw.rect(screen, self.color, self.rect, 2)
-
-    def change_text(self, text):
-        screen.fill((255,255,255))
-        self.text = text
-        self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
-        self.draw(screen)
-
-
-class TextField:
+class DisplayableField:
     def __init__(self,x,y,width, height, text):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
@@ -101,6 +76,17 @@ class TextField:
         self.txt_surface = self.font.render(self.text, True, FONT_COLOR)
         self.draw(screen)
 
+
+class Button(DisplayableField):
+    def __init__(self,x,y,width,height,text):
+        super().__init__(x,y,width,height,text)
+        self.color = FONT_COLOR
+
+    def is_pressed(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                return 1
+        return 0
 
 def all_fields_filled(grid):
     for i in range(0, 9):
@@ -229,7 +215,7 @@ def initialization():
     gui_objects["visualize_button"] = Button(700,400, 300, 30, visualize_button_text)
     gui_objects["percentage_increase_button"] = Button(700,280, 100,30, "+")
     gui_objects["percentage_decrease_button"] = Button(820,280, 100, 30, "-")
-    gui_objects["percentage_textbox"] = TextField(700,250, 100, 30, str("Initialized filled tiles: " + str(percentage_filled)))
+    gui_objects["percentage_textbox"] = DisplayableField(700,250, 100, 30, str("Initialized filled tiles: " + str(percentage_filled)))
 
     draw_all_gui(gui_objects, screen)
 
