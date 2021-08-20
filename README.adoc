@@ -1,0 +1,26 @@
+= Sudoku Visualized
+
+This application uses Pygame to visualize the algorithm behind the creation as well as the solving of sudokus. This visualization can be toggled on and off. The user can solve 
+the generated sudoku by clicking into a field and entering a number or choose to let the algorithm find a solution for the given sudoku.
+
+== Sudoku Rules
+
+A sudoku consists of a 9x9 grid. Each field can be assigned a number from 1 to 9. A valid sudoku satisfies the following: 
+
+- Each row contains each number from 1 to 9 exactly once
+
+- Each column contains each number from 1 to 9 exactly once
+
+- Each of the nine 3x3 squares contains each number from 1 to 9 exactly once
+
+== The Algorithm
+
+Both creating and solving a sudoku uses the same algorithm based on Exhaustive Search (creating = solving an empty sudoku). 
+The algorithm searches an empty spot and tries to randomly assigns a number from 1 to 9 
+to it, that doesnt violate the sudoku rules. It will then move on to the next free spot. If an empty spot cannot be filled by any integer between 1 and 9, the algorithm will 
+backtrack and assign a new random number to the field filled prior. By doing so, the recursive backtracking will eventually find a field that was previously filled in a way, 
+that made finding numbers for empty fields in later iterations impossible. The algorithm will replace this field and tries to move on again.
+
+Since this algorithm uses no "logic thinking on how to solve a sudoku" and is instead based on brute force by trying to assign random numbers to the fields until the sudoku 
+becomes unfillable and then backtracking and trying again, the runtime may vary, depending on the luck of the random assignments. However, the algorithm is always exact, 
+meaning, it is guaranteed to generate a solvable sudoku during creation and also to find a valid solution during solving.
