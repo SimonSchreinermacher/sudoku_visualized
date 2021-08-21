@@ -224,7 +224,12 @@ def initialization():
     for i in range(0, 9):
         grid.append([])
         for j in range(0, 9):
-            field = SudokuField(100+ i*60, 100 + j*60, 50, 50, "", False)
+            x_offset = 10* int(i/3)
+            y_offset = 10* int(j/3)
+
+            x_pos = 100 + i*60 + x_offset
+            y_pos = 100 + j*60 + y_offset
+            field = SudokuField(x_pos, y_pos, 50, 50, "", False)
             grid[i].append(field)
             field.draw(screen)
 
@@ -271,7 +276,12 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
         for i in range(0, 9):
             grid.append([])
             for j in range(0, 9):
-                field = SudokuField(100+ i*60, 100 + j*60, 50, 50, "", False)
+                x_offset = 10* int(i/3)
+                y_offset = 10* int(j/3)
+
+                x_pos = 100 + i*60 + x_offset
+                y_pos = 100 + j*60 + y_offset
+                field = SudokuField(x_pos, y_pos, 50, 50, "", False)
                 grid[i].append(field)
                 field.draw(screen)
 
