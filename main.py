@@ -200,6 +200,21 @@ def draw_all_gui(gui_objects, screen):
     for object in gui_objects:
         gui_objects[object].draw(screen)
 
+def draw_grid():
+    grid = []
+    for i in range(0, 9):
+        grid.append([])
+        for j in range(0, 9):
+            x_offset = 10* int(i/3)
+            y_offset = 10* int(j/3)
+
+            x_pos = 100 + i*60 + x_offset
+            y_pos = 100 + j*60 + y_offset
+            field = SudokuField(x_pos, y_pos, 50, 50, "", False)
+            grid[i].append(field)
+            field.draw(screen)
+    return grid
+
 def initialization():
     do_visualize = True
     percentage_filled = 0.5
@@ -220,18 +235,7 @@ def initialization():
     draw_all_gui(gui_objects, screen)
 
     screen.fill((255,255,255))
-    grid = []
-    for i in range(0, 9):
-        grid.append([])
-        for j in range(0, 9):
-            x_offset = 10* int(i/3)
-            y_offset = 10* int(j/3)
-
-            x_pos = 100 + i*60 + x_offset
-            y_pos = 100 + j*60 + y_offset
-            field = SudokuField(x_pos, y_pos, 50, 50, "", False)
-            grid[i].append(field)
-            field.draw(screen)
+    grid = draw_grid()
 
     game_started = False
     do_visualize = True
@@ -272,18 +276,7 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
 
     if(len(grid) == 0):             #In first game round, grid is passed from the initialization, in all subsequent rounds, grid is created here, because it needs to be cleared before each round
         screen.fill((255,255,255))
-        grid = []
-        for i in range(0, 9):
-            grid.append([])
-            for j in range(0, 9):
-                x_offset = 10* int(i/3)
-                y_offset = 10* int(j/3)
-
-                x_pos = 100 + i*60 + x_offset
-                y_pos = 100 + j*60 + y_offset
-                field = SudokuField(x_pos, y_pos, 50, 50, "", False)
-                grid[i].append(field)
-                field.draw(screen)
+        grid = draw_grid()
 
     draw_all_gui(gui_objects, screen)
     draw_all_field(grid)
