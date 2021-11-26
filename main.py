@@ -215,6 +215,68 @@ def draw_grid():
             field.draw(screen)
     return grid
 
+def on_visualize_button_click(do_visualize, gui_objects):
+    do_visualize = not do_visualize
+    if do_visualize:
+        gui_objects["visualize_button"].change_text("Visualization enabled")
+    else:
+        gui_objects["visualize_button"].change_text("Visualization disabled")
+    return do_visualize
+
+def on_percentage_increase_button_click(percentage_filled, gui_objects):
+    if percentage_filled < 0.99:
+        percentage_filled += 0.01
+        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
+    return percentage_filled
+
+def on_percentage_decrease_button_click(percentage_filled, gui_objects):
+    if percentage_filled > 0.01:
+        percentage_filled -= 0.01
+        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
+    return percentage_filled
+
+def on_start_game_button_click(gui_objects, do_visualize, percentage_filled, initialization_phase):
+    if(initialization_phase):
+        gui_objects["start_game"].change_text("Another round!")
+        game_started = True
+        return game_started
+    else:
+        game(gui_objects, do_visualize, percentage_filled)
+        game_active = False
+        return game_active
+    
+def on_solve_button_click(do_visualize, grid):
+    fill_sudoku(grid,do_visualize)
+    is_solved = True
+    on_solve(grid)
+    return is_solved
+
+def handle_all_button_clicks(gui_objects, grid, do_visualize, percentage_filled, initialization_phase, event):
+    if initialization_phase:
+        game_started = False
+    else:
+        game_active = True
+        is_solved = False
+        
+    if gui_objects["visualize_button"].is_pressed(event) == 1:
+        do_visualize = on_visualize_button_click(do_visualize, gui_objects)
+    elif gui_objects["percentage_increase_button"].is_pressed(event) == 1:
+        percentage_filled = on_percentage_increase_button_click(percentage_filled, gui_objects)
+    elif gui_objects["percentage_decrease_button"].is_pressed(event) == 1:
+        percentage_filled = on_percentage_decrease_button_click(percentage_filled, gui_objects)
+    elif gui_objects["start_game"].is_pressed(event) == 1:
+        if initialization_phase:
+            game_started = on_start_game_button_click(gui_objects, do_visualize, percentage_filled, initialization_phase)
+        else:
+            game_active = on_start_game_button_click(gui_objects, do_visualize, percentage_filled, initialization_phase)
+    elif not initialization_phase and gui_objects["solve_button"].is_pressed(event) == 1:
+        is_solved = on_solve_button_click(do_visualize, grid)
+        
+    if initialization_phase:
+        return(do_visualize, percentage_filled, game_started)
+    else:
+        return(do_visualize, percentage_filled, is_solved, game_active)
+
 def initialization():
     do_visualize = True
     percentage_filled = 0.5
@@ -247,23 +309,7 @@ def initialization():
                 pygame.quit()
                 return
             else:
-                if gui_objects["visualize_button"].is_pressed(event) == 1:
-                    do_visualize = not do_visualize
-                    if do_visualize:
-                        gui_objects["visualize_button"].change_text("Visualization enabled")
-                    else:
-                        gui_objects["visualize_button"].change_text("Visualization disabled")
-                elif gui_objects["percentage_increase_button"].is_pressed(event) == 1:
-                    if percentage_filled < 0.99:
-                        percentage_filled += 0.01
-                        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
-                elif gui_objects["percentage_decrease_button"].is_pressed(event) == 1:
-                    if percentage_filled > 0.01:
-                        percentage_filled -= 0.01
-                        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
-                elif gui_objects["start_game"].is_pressed(event) == 1:
-                    game_started = True
-                    gui_objects["start_game"].change_text("Another round!")
+                (do_visualize, percentage_filled, game_started) = handle_all_button_clicks(gui_objects, grid, do_visualize, percentage_filled, True, event)       
         
         draw_all_gui(gui_objects, screen)
         draw_all_field(grid)
@@ -298,34 +344,13 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
                 pygame.quit()
                 return
             else:
-                if gui_objects["visualize_button"].is_pressed(event) == 1:
-                    do_visualize = not do_visualize
-                    if do_visualize:
-                        gui_objects["visualize_button"].change_text("Visualization enabled")
-                    else:
-                        gui_objects["visualize_button"].change_text("Visualization disabled")
-                elif gui_objects["start_game"].is_pressed(event) == 1:
-                    game(gui_objects, do_visualize, percentage_filled)
-                    return
-                elif gui_objects["percentage_increase_button"].is_pressed(event) == 1:
-                    if percentage_filled < 0.99:
-                        percentage_filled += 0.01
-                        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
-                elif gui_objects["percentage_decrease_button"].is_pressed(event) == 1:
-                    if percentage_filled > 0.01:
-                        percentage_filled -= 0.01
-                        gui_objects["percentage_textbox"].change_text("Initialized filled tiles: " + str(round(percentage_filled,2)))
-                elif gui_objects["solve_button"].is_pressed(event) == 1:
-                    fill_sudoku(grid,do_visualize)
-                    is_solved = True
-                    on_solve(grid)
-                else:
-                    if(not is_solved):
-                        if(handle_all_fields(grid, event) == 1):
-                            if all_fields_filled(grid) == 1:
-                                if(solved_correctly(grid)):
-                                    on_solve(grid)
-                                    is_solved = True
+                (do_visualize, percentage_filled, is_solved, game_active) = handle_all_button_clicks(gui_objects, grid, do_visualize, percentage_filled, False, event)
+                if(not is_solved):
+                    if(handle_all_fields(grid, event) == 1):
+                        if all_fields_filled(grid) == 1:
+                            if(solved_correctly(grid)):
+                                on_solve(grid)
+                                is_solved = True
 
 
 if __name__ == '__main__':
