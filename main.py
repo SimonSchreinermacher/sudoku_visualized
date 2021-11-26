@@ -13,7 +13,6 @@ USER_INPUT_FONT_COLOR = (100,100,100)
 SOLVED_COLOR = (20,200,20)
 
 class SudokuField:
-
     def __init__(self, x, y, width, height, text, number_locked):
         self.rect = pygame.Rect(x, y, width, height)
         self.color = DEFAULT_COLOR
@@ -88,6 +87,17 @@ class Button(DisplayableField):
                 return 1
         return 0
 
+
+
+
+#===========Handling user number input===================================
+def handle_all_fields(grid, event):
+    for i in range(0, 9):
+        for j in range(0, 9):
+            if(grid[i][j].handle_input(event) == 1):
+                return 1
+    return 0
+
 def all_fields_filled(grid):
     for i in range(0, 9):
         for j in range(0,9):
@@ -119,19 +129,45 @@ def solved_correctly(grid):
                 return False
     return True
 
-def handle_all_fields(grid, event):
-    for i in range(0, 9):
-        for j in range(0, 9):
-            if(grid[i][j].handle_input(event) == 1):
-                return 1
-    return 0
+def on_solve(grid):
+    for i in range(0,9):
+        for j in range(0,9):
+            grid[i][j].color = SOLVED_COLOR
+    draw_all_field(grid)
+#========================================================================
 
+
+
+#============Drawing methods=============================================
 def draw_all_field(grid):
     for i in range(0, 9):
         for j in range(0, 9):
             grid[i][j].draw(screen)
     pygame.display.flip()
+    
+def draw_all_gui(gui_objects, screen):
+    for object in gui_objects:
+        gui_objects[object].draw(screen)
 
+def draw_grid():
+    grid = []
+    for i in range(0, 9):
+        grid.append([])
+        for j in range(0, 9):
+            x_offset = 10* int(i/3)
+            y_offset = 10* int(j/3)
+
+            x_pos = 100 + i*60 + x_offset
+            y_pos = 100 + j*60 + y_offset
+            field = SudokuField(x_pos, y_pos, 50, 50, "", False)
+            grid[i].append(field)
+            field.draw(screen)
+    return grid
+#========================================================================
+
+
+
+#============Creating/Solving Sudoku ====================================
 def search_for_empty_spot(grid):
 	for i in range(0, 9):
 		for j in range(0, 9):
@@ -189,32 +225,11 @@ def remove_some_numbers(grid, probability_to_remain):
             if x > probability_to_remain:
                 grid[i][j].set_number(str(""), False)
                 grid[i][j].number_locked = False
+#========================================================================
 
-def on_solve(grid):
-    for i in range(0,9):
-        for j in range(0,9):
-            grid[i][j].color = SOLVED_COLOR
-    draw_all_field(grid)
 
-def draw_all_gui(gui_objects, screen):
-    for object in gui_objects:
-        gui_objects[object].draw(screen)
 
-def draw_grid():
-    grid = []
-    for i in range(0, 9):
-        grid.append([])
-        for j in range(0, 9):
-            x_offset = 10* int(i/3)
-            y_offset = 10* int(j/3)
-
-            x_pos = 100 + i*60 + x_offset
-            y_pos = 100 + j*60 + y_offset
-            field = SudokuField(x_pos, y_pos, 50, 50, "", False)
-            grid[i].append(field)
-            field.draw(screen)
-    return grid
-
+#============Button handling=============================================
 def on_visualize_button_click(do_visualize, gui_objects):
     do_visualize = not do_visualize
     if do_visualize:
@@ -276,7 +291,11 @@ def handle_all_button_clicks(gui_objects, grid, do_visualize, percentage_filled,
         return(do_visualize, percentage_filled, game_started)
     else:
         return(do_visualize, percentage_filled, is_solved, game_active)
+#========================================================================
 
+
+
+#=====================Game workflow======================================
 def initialization():
     do_visualize = True
     game_started = False
@@ -344,7 +363,7 @@ def game(gui_objects, do_visualize, percentage_filled, grid = []):
                             if(solved_correctly(grid)):
                                 on_solve(grid)
                                 is_solved = True
-
+#========================================================================
 
 if __name__ == '__main__':
     initialization()
