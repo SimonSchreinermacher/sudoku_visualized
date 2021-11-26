@@ -279,17 +279,13 @@ def handle_all_button_clicks(gui_objects, grid, do_visualize, percentage_filled,
 
 def initialization():
     do_visualize = True
+    game_started = False
     percentage_filled = 0.5
-
-    if(do_visualize):
-        visualize_button_text = "Visualization enabled"
-    else:
-        visualize_button_text = "Visualization disabled"
 
     gui_objects = {}
 
     gui_objects["start_game"] = Button(700,100, 300,30, "Start Sudoku")
-    gui_objects["visualize_button"] = Button(700,400, 300, 30, visualize_button_text)
+    gui_objects["visualize_button"] = Button(700,400, 300, 30, "Visualization enabled")
     gui_objects["percentage_increase_button"] = Button(700,280, 100,30, "+")
     gui_objects["percentage_decrease_button"] = Button(820,280, 100, 30, "-")
     gui_objects["percentage_textbox"] = DisplayableField(700,250, 100, 30, str("Initialized filled tiles: " + str(percentage_filled)))
@@ -298,9 +294,6 @@ def initialization():
 
     screen.fill((255,255,255))
     grid = draw_grid()
-
-    game_started = False
-    do_visualize = True
 
     while not game_started:
         for event in pygame.event.get():
